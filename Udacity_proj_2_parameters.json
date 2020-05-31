@@ -5,7 +5,7 @@
     },
     {
         "ParameterKey": "SourceBucketNameSSMparameter",
-        "ParameterValue": "Shivam-UdacityProject-hawp-Source"
+        "ParameterValue": "udacity-hawp-para"
     },
 	{
 		"ParameterKey": "VpcCIDR",

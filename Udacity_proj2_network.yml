@@ -306,8 +306,6 @@ Resources:
               cd /var/www/html
               aws s3 cp s3://${SourceBucketNameSSMparameter}/site.zip .
               unzip -o site.zip
-              UUID=$(cat /proc/sys/kernel/random/uuid)
-              echo "<p>You are on server $UUID</p>" >> index.html #UUID for each instance to verify load balancing
               
       BlockDeviceMappings:
         - DeviceName: "/dev/sda1"
