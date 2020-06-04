@@ -16,11 +16,6 @@ Parameters:
     Description: An environment name that will be prefixed to resource names
     Type: String
 
-
-  SourceBucketNameSSMparameter:
-    Description: The SSM Parameter with the S3 bucket name that contains the application source files.
-    Type: AWS::SSM::Parameter::Value<String>  
-
   VpcCIDR:
     Description: Please enter the IP range (CIDR notation) for this VPC
     Type: String
