@@ -46,20 +46,10 @@ Parameters:
     Type: String
     Default: 10.0.3.0/24
 
- # Instance and application parameters
-  ApplicationPort:
-    Description: The port number used by the application. Both for the external facing load balancer and internal application servers.
+  DestinationCidrBlock:
+    Description: routing Role
     Type: String
-    Default: 80
-
-  WebApplicationServerAMI:
-    Description: AMI to be used for the web application servers
-    Type: String
-
-  WebApplicationServerInstanceType:
-    Description: Instance type to be used for the web application servers
-    Type: String
-    Default: t3.medium
+    Default: 0.0.0.0/0
 
 
 # ---------------------------------------
@@ -147,7 +137,7 @@ Resources:
     DependsOn: InternetGatewayAttachment
     Properties:
       RouteTableId: !Ref PublicRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
+      DestinationCidrBlock: !Ref DestinationCidrBlock
       GatewayId: !Ref InternetGateway
 
   PublicSubnet1RouteTableAssociation:
@@ -198,7 +188,7 @@ Resources:
     Type: AWS::EC2::Route
     Properties:
       RouteTableId: !Ref PrivateRouteTable1
-      DestinationCidrBlock: 0.0.0.0/0
+      DestinationCidrBlock: !Ref DestinationCidrBlock
       NatGatewayId: !Ref NatGateway1
 
   PrivateSubnet1RouteTableAssociation:
@@ -219,7 +209,7 @@ Resources:
     Type: AWS::EC2::Route
     Properties:
       RouteTableId: !Ref PrivateRouteTable2
-      DestinationCidrBlock: 0.0.0.0/0
+      DestinationCidrBlock: !Ref DestinationCidrBlock
       NatGatewayId: !Ref NatGateway2
 
   PrivateSubnet2RouteTableAssociation:
@@ -227,168 +217,6 @@ Resources:
     Properties:
       RouteTableId: !Ref PrivateRouteTable2
       SubnetId: !Ref PrivateSubnet2
-
-#--------------------------
-# Autoscaling group
-#---------------------------
-
-#Instance role configured to allow access to source s3 bucket and SSM agent for management
-  UdacityS3ReadOnlyEC2:
-    Type: AWS::IAM::Role
-    Properties:
-      Description: IAM Role for environment instances.
-      Path: "/"
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-            - Effect: Allow
-              Principal:
-                Service:
-                  - "ec2.amazonaws.com"
-              Action:
-                - "sts:AssumeRole"
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore # For SSM session manager
-      Policies:
-        - 
-          PolicyName: !Sub ${EnvironmentName}-BucketAccessPolicy #Inline policy for source s3 bucket passed in as parameter
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-                - 
-                  Effect: "Allow"
-                  Action: "s3:ListBucket"
-                  Resource: !Sub "arn:aws:s3:::${SourceBucketNameSSMparameter}"
-                - 
-                  Effect: "Allow"
-                  Action: 
-                    - "s3:PutObject"
-                    - "s3:GetObject"
-                    - "s3:DeleteObject"
-                  Resource: !Sub "arn:aws:s3:::${SourceBucketNameSSMparameter}/*"
-
-  InstanceProfile:
-    Type: AWS::IAM::InstanceProfile
-    Properties:
-      Path: /
-      Roles:
-        - !Ref UdacityS3ReadOnlyEC2        
-
-  WebAppServerSG:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: !Sub ${EnvironmentName}-WebAppServerSG
-      GroupDescription: "Allow http to client host"
-      VpcId: !Ref VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: !Ref ApplicationPort
-          ToPort: !Ref ApplicationPort
-          SourceSecurityGroupId: !Ref WebAppLoadBalancerSG               
-
-  WebAppServerLaunchConfig:
-    Type: AWS::AutoScaling::LaunchConfiguration
-    Properties:      
-      AssociatePublicIpAddress: false
-      IamInstanceProfile: !Ref InstanceProfile
-      ImageId: !Ref WebApplicationServerAMI
-      InstanceMonitoring: false 
-      InstanceType: !Ref WebApplicationServerInstanceType
-      SecurityGroups:
-        - !Ref WebAppServerSG
-      UserData: 
-        Fn::Base64:
-          !Sub |
-              #!/bin/bash -xe
-              apt-get update -y
-              apt-get install unzip awscli -y
-              apt-get install apache2 -y
-              systemctl start apache2.service
-              cd /var/www/html
-              aws s3 cp s3://${SourceBucketNameSSMparameter}/site.zip .
-              unzip -o site.zip
-              
-      BlockDeviceMappings:
-        - DeviceName: "/dev/sda1"
-          Ebs:
-            VolumeSize: 10 # As specified in requirements
-
-  WebAppServerASG:
-      Type: AWS::AutoScaling::AutoScalingGroup
-      Properties:
-        HealthCheckType: ELB
-        HealthCheckGracePeriod: 150 # Test and modify the grace period if changes made to instances/application
-        AvailabilityZones: 
-          - !Select [ 0, !GetAZs '' ]
-          - !Select [ 1, !GetAZs '' ]
-        VPCZoneIdentifier:
-          - !Ref PrivateSubnet1
-          - !Ref PrivateSubnet2
-        LaunchConfigurationName: !Ref WebAppServerLaunchConfig
-        MaxSize: '4' 
-        MinSize: '4'  # As specified in requirements
-        Tags: 
-          - Key: Name
-            Value: !Sub ${EnvironmentName}-WebAppServerASG
-            PropagateAtLaunch: True
-        TargetGroupARNs:
-          - !Ref WebAppTargetGroup
-
-#---------------------------------
-# Load balancer
-#---------------------------------
-  WebAppLoadBalancerSG:
-    Type: AWS::EC2::SecurityGroup
-    Properties:      
-      GroupDescription: Allow Loadbalancer on specified      
-      VpcId: !Ref VPC
-      SecurityGroupIngress: 
-        - IpProtocol: tcp
-          FromPort: !Ref ApplicationPort
-          ToPort: !Ref ApplicationPort
-          CidrIp: 0.0.0.0/0      
-
-  WebAppLoadBalancerSecurityGroupEgress:
-    Type: AWS::EC2::SecurityGroupEgress
-    Properties: 
-      GroupId: !Ref WebAppLoadBalancerSG
-      IpProtocol: tcp 
-      FromPort: !Ref ApplicationPort
-      ToPort: !Ref ApplicationPort
-      DestinationSecurityGroupId: !Ref WebAppServerSG      
-
-  WebAppTargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      HealthCheckPath: /
-      Port: !Ref ApplicationPort
-      Protocol: HTTP
-      HealthCheckProtocol: HTTP
-      HealthCheckIntervalSeconds: 35
-      HealthCheckTimeoutSeconds: 30
-      HealthyThresholdCount: 2
-      UnhealthyThresholdCount: 2
-      VpcId: !Ref VPC
-
-  WebAppLoadBalancer:
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-    Properties: 
-      Name: !Sub ${EnvironmentName}-WebAppServerLB
-      SecurityGroups: 
-        - !Ref WebAppLoadBalancerSG
-      Subnets:
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
-
-  WebAppLoadBalancerListener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      DefaultActions:
-        - Type: forward
-          TargetGroupArn: !Ref WebAppTargetGroup
-      Protocol: HTTP
-      Port: !Ref ApplicationPort
-      LoadBalancerArn: !Ref WebAppLoadBalancer
 
 #--------------------------
 #  Output
