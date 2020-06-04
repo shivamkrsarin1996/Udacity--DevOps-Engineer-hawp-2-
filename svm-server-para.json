@@ -1,42 +1,43 @@
 [
 	{
 		"ParameterKey": "EnvironmentName",
-		"ParameterValue": "Shivam-hawp"
+		"ParameterValue": "UdacityProject"
     },
     {
-        "ParameterKey": "SourceBucketNameSSMparameter",
-        "ParameterValue": "udacity-hawp-para"
-    },
-	{
-		"ParameterKey": "VpcCIDR",
-		"ParameterValue": "10.0.0.0/16"
-	},
-    {
-    "ParameterKey": "PublicSubnet1CIDR",
-    "ParameterValue": "10.0.0.0/24"
+        "ParameterKey":"DestinationCidrBlock",
+        "ParameterValue": "0.0.0.0/0 "
+
     },
     {
-        "ParameterKey": "PublicSubnet2CIDR",
-        "ParameterValue": "10.0.1.0/24"
+        "ParameterKey":"FromPortIngress",
+        "ParameterValue": "80 "
+
     },
     {
-        "ParameterKey": "PrivateSubnet1CIDR",
-        "ParameterValue": "10.0.2.0/24"
+        "ParameterKey":"ToPortIngress",
+        "ParameterValue": "80 "
+
     },
     {
-        "ParameterKey": "PrivateSubnet2CIDR",
-        "ParameterValue": "10.0.3.0/24"
+        "ParameterKey":"CidrIpIngress",
+        "ParameterValue": "0.0.0.0/0 "
+
     },
     {
-        "ParameterKey": "ApplicationPort",
-        "ParameterValue": "80"
+        "ParameterKey":"FromPortEgress",
+        "ParameterValue": "80 "
+
     },
     {
-        "ParameterKey": "WebApplicationServerAMI",
-        "ParameterValue": "ami-06d51e91cea0dac8d"
+        "ParameterKey":"ToPortEgress",
+        "ParameterValue": "80 "
+
     },
     {
-        "ParameterKey": "WebApplicationServerInstanceType",
-        "ParameterValue": "t3.medium"
+        "ParameterKey":"CidrIpEgress",
+        "ParameterValue": "0.0.0.0/0 "
+
     }
+    
+   
 ]
