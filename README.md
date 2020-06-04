@@ -1,6 +1,7 @@
 ﻿###  Deploy a high-availability web app using CloudFormation
 There will be two parts to this project:
 You'll first develop a diagram that you can present as part of your portfolio and as a visual aid to understand the CloudFormation script.
+The file for the diagram is attached in Udagram_diagram.jpeg file.
 The second part is to interpret the instructions as well as your own diagram and create a matching CloudFormation script.
 
 
@@ -20,11 +21,4 @@ The second part is to interpret the instructions as well as your own diagram and
   * Launch Configuration
 
 ### How to Run?
-* run infrastructure
-```
- ./create.sh stackname infrastructure .yaml infrastructure-params.json
-```
-* run server
- ```
-./update.sh stackname server.yaml server-parameters.json
-```
+
