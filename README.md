@@ -2,6 +2,7 @@
 There will be two parts to this project:
 You'll first develop a diagram that you can present as part of your portfolio and as a visual aid to understand the CloudFormation script.
 The file for the diagram is attached in Udagram_diagram.jpeg file.
+
 The second part is to interpret the instructions as well as your own diagram and create a matching CloudFormation script.
 
 
