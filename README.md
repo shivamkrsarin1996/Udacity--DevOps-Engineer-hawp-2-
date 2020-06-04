@@ -1,5 +1,6 @@
 ﻿###  Deploy a high-availability web app using CloudFormation
 There will be two parts to this project:
+
 You'll first develop a diagram that you can present as part of your portfolio and as a visual aid to understand the CloudFormation script.
 The file for the diagram is attached in Udagram_diagram.jpeg file.
 
