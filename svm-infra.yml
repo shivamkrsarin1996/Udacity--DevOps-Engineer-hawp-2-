@@ -218,14 +218,6 @@ Resources:
 #--------------------------
 
 Outputs:
-  
-  LoadBalancerURL:
-    Description: URL of the application loadbalancer.
-    Value:  !Sub
-        - http://${URL}
-        - {URL: !GetAtt WebAppLoadBalancer.DNSName}
-    Export:
-          Name: !Sub ${EnvironmentName}-LoadBalancerURL
 
   VPC:
     Description: A reference to the created VPC
