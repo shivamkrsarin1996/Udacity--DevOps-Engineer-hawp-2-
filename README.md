@@ -23,4 +23,6 @@ The second part is to interpret the instructions as well as your own diagram and
   * Launch Configuration
 
 ### How to Run?
+Run the create command to create a stack:
 
+./scripts/create.sh udagram us-west-2
