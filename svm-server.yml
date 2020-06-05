@@ -116,7 +116,7 @@ Resources:
     Properties:
       ImageId: ami-005bdb005fb00e791
       SecurityGroups:
-      - Ref: WebServerSecGroup
+      - Ref: WebServerSecurityGroup
       InstanceType: t3.medium
       BlockDeviceMappings:      
       - DeviceName: "/dev/sdk"
@@ -200,9 +200,9 @@ Resources:
 #Output
 #===========================
 Outputs:
-  WebAppLB:
+  WebAppLoadBalancer:
     Description: A reference to the APP's URL Link
-    Value: !Join [ "", [ "http://", !GetAtt WebAppLB.DNSName]]
+    Value: !Join [ "", [ "http://", !GetAtt WebAppLoadBalancer.DNSName]]
     Export:
       Name: "URL:"
 
