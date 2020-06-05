@@ -204,5 +204,5 @@ Outputs:
     Description: A reference to the APP's URL Link
     Value: !Join [ "", [ "http://", !GetAtt WebAppLB.DNSName]]
     Export:
-      Name: "URL"
+      Name: "URL:"
 
