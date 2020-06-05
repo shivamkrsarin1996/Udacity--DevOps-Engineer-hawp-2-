@@ -1,32 +1,38 @@
 [
-	{
-		"ParameterKey": "EnvironmentName",
-		"ParameterValue": "svm-Udacity"
+    {
+        "ParameterKey": "EnvironmentName",
+        "ParameterValue": "Infra"
     },
     {
-		"ParameterKey": "VpcCIDR",
-		"ParameterValue": "10.0.0.0/16"
-	},
-    {
-		"ParameterKey": "PublicSubnet1CIDR",
-		"ParameterValue": "10.0.0.0/24"
-	},
-	{
-		"ParameterKey": "PublicSubnet2CIDR",
-		"ParameterValue": "10.0.1.0/24"
-	},
-	{
-		"ParameterKey": "PrivateSubnet1CIDR",
-		"ParameterValue": "10.0.2.0/24"
-	},
-	{
-		"ParameterKey": "PrivateSubnet2CIDR",
-		"ParameterValue": "10.0.3.0/24"
+        "ParameterKey": "ProjectName",
+        "ParameterValue": "UdacityHighAvailabilitySite"
     },
     {
-        "ParameterKey":"DestinationCidrBlock",
-        "ParameterValue": "0.0.0.0/0 "
-
+        "ParameterKey": "VPCCidrBlock",
+        "ParameterValue": "10.0.0.0/16"
+    },
+    {
+        "ParameterKey": "PublicSubNet1CIDR",
+        "ParameterValue": "10.0.1.0/24"
+    },
+    {
+        "ParameterKey": "PublicSubNet2CIDR",
+        "ParameterValue": "10.0.2.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubNet1CIDR",
+        "ParameterValue": "10.0.3.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubNet2CIDR",
+        "ParameterValue": "10.0.4.0/24"
+    },
+    {
+        "ParameterKey": "AutoScalingGroupMinSize",
+        "ParameterValue": "3"
+    },
+    {
+        "ParameterKey": "AutoScalingGroupMaxSize",
+        "ParameterValue": "5"
     }
-
 ]
